@@ -6,7 +6,7 @@ function Invoke-SophosCentralWebRequest {
         
         [System.Collections.Hashtable]$CustomHeader,
 
-        [ValidateSet('Get', 'Post', 'Put', 'Delete')]
+        [ValidateSet('Get', 'Post', 'Put', 'Delete', 'Patch')]
         [string]$Method = 'Get',
 
         [System.Collections.Hashtable]$Body
@@ -49,11 +49,14 @@ function Invoke-SophosCentralWebRequest {
     }
 
     #query api and return the first page
+    Write-Verbose "$uri`n$header"
     $response = Invoke-RestMethod @webRequest
-    if ($null -ne $response.items) {
-        $response.items
-    } else {
-        $response
+    if ($response.gettype().name -ne "PSCustomObject") {$response} else {
+        if ($null -ne $response.items) {
+            $response.items
+        } else {
+            $response
+        }
     }
     
     #pagination
